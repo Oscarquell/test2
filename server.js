@@ -2,27 +2,11 @@ const TelegramBot = require('node-telegram-bot-api');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const newsData = require('./constants/news')
+const testData = require('./constants/test')
 
 const PORT = 3333;
-const newsData = [
-    {
-        id: 1,
-        image: `http://localhost:${PORT}/assets/image 37.png`,
-        text: 'На пересечении улиц Ахунбаева / Советская установлен знак 14.1 Имеется спорная точка зрения, гласящая примерно следующее: сторонники тоталитаризма в науке, вне зависимости от их уровня, должны быть обнародованы. Являясь всего лишь частью общей картины, стремящиеся вытеснить традиционное производство, нанотехнологии, превозмогая сложившуюся непростую.'
-    },
-    {
-        id: 2,
-        image: `http://localhost:${PORT}/assets/image 38.png`,
-        text: 'На пересечении улиц Ахунбаева / Советская установлен знак 14.1 Имеется спорная точка зрения, гласящая примерно следующее: сторонники тоталитаризма в науке, вне зависимости от их уровня, должны быть обнародованы. Являясь всего лишь частью общей картины, стремящиеся вытеснить традиционное производство, нанотехнологии, превозмогая сложившуюся непростую.'
-    },
-    {
-        id: 3,
-        image: `http://localhost:${PORT}/assets/image 39.png`,
-        text: 'На пересечении улиц Ахунбаева / Советская установлен знак 14.1 Имеется спорная точка зрения, гласящая примерно следующее: сторонники тоталитаризма в науке, вне зависимости от их уровня, должны быть обнародованы. Являясь всего лишь частью общей картины, стремящиеся вытеснить традиционное производство, нанотехнологии, превозмогая сложившуюся непростую.'
-    },
-];
-
-const botToken = '6761213369:AAHxksh-NRtXTr7JGhPKSr-wmzTB4Dc4HSA'; // Замените на ваш токен
+const botToken = '6761213369:AAHxksh-NRtXTr7JGhPKSr-wmzTB4Dc4HSA';
 const bot = new TelegramBot(botToken, { polling: true });
 
 const app = express();
@@ -32,6 +16,20 @@ app.use(cors());
 
 app.get('/news', (req, res) => {
     res.status(200).json(newsData);
+});
+
+app.get('/test', (req, res) => {
+    res.status(200).json(testData);
+});
+
+app.get('/test/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const testDataItem = testData.questions.find(item => item.id === id);
+    if (testDataItem) {
+        res.status(200).json(testDataItem);
+    } else {
+        res.status(400).send('Тест с указанным ID не найден.');
+    }
 });
 
 app.post('/send-message', (req, res) => {
